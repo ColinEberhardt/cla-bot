@@ -189,6 +189,12 @@ exports.handler = constructHandler(async webhook => {
     return `CLA has not been signed by users ${users}, added a comment to ${pullRequestUrl}`;
   };
 
+  const labels = await getLabels(issueUrl);
+  if (labels.some(l => l.name === botConfig.not_required_label)) {
+    await setStatus(webhook, headSha, "success", logFile);
+    return `Label ${botConfig.not_required_label} found, no CLA required for ${pullRequestUrl}`;
+  }
+
   let message;
   if (unresolvedLoginNames.length > 0) {
     const unidentifiedString = unresolvedLoginNames.join(", ");
@@ -216,8 +222,6 @@ exports.handler = constructHandler(async webhook => {
       logger.info(
         "All contributors have a signed CLA, adding success status to the pull request and a label"
       );
-
-      const labels = await getLabels(issueUrl);
 
       // check whether this label already exists
       if (!labels.some(l => l.name === botConfig.label)) {
