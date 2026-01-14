@@ -184,7 +184,10 @@ exports.handler = constructHandler(async webhook => {
   const botConfig = Object.assign({}, defaultConfig, config);
 
   const removeLabelAndSetFailureStatus = async users => {
-    await deleteLabel(issueUrl, botConfig.label);
+    if (botConfig.label !== null) {
+      // Only add/delete labels if the `label` in `.clabot` is not null
+      await deleteLabel(issueUrl, botConfig.label);
+    }
     await setStatus(webhook, headSha, "error", logFile);
     return `CLA has not been signed by users ${users}, added a comment to ${pullRequestUrl}`;
   };
@@ -217,20 +220,27 @@ exports.handler = constructHandler(async webhook => {
         "All contributors have a signed CLA, adding success status to the pull request and a label"
       );
 
-      const labels = await getLabels(issueUrl);
-
-      // check whether this label already exists
-      if (!labels.some(l => l.name === botConfig.label)) {
-        await addLabel(issueUrl, botConfig.label);
-      } else {
-        logger.info(
-          `The pull request already has the label ${botConfig.label}`
-        );
-      }
-
       await setStatus(webhook, headSha, "success", logFile);
 
-      message = `added label ${botConfig.label} to ${pullRequestUrl}`;
+      if (botConfig.label === null) {
+        message = `Skipping adding label to ${pullRequestUrl}, because botconfig.label is null`;
+      }
+      else {
+        // Only apply labels if the `label` in `.clabot` is not null
+
+        const labels = await getLabels(issueUrl);
+
+        // check whether this label already exists
+        if (!labels.some(l => l.name === botConfig.label)) {
+          await addLabel(issueUrl, botConfig.label);
+        } else {
+          logger.info(
+            `The pull request already has the label ${botConfig.label}`
+          );
+        }
+        message = `added label ${botConfig.label} to ${pullRequestUrl}`;
+      }
+
     } else {
       const usersWithoutCLA = sortUnique(nonContributors)
         .map(contributorId => `@${contributorId}`)
