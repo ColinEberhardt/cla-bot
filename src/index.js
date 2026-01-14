@@ -176,7 +176,7 @@ exports.handler = constructHandler(async webhook => {
 
   if (!is.json(config)) {
     logger.error("The .clabot file is not valid JSON");
-    await setStatus(webhook, headSha, "error", logFile);
+    await setStatus(webhook, headSha, "error", logFile, botConfig.commitStatus);
     throw new Error("The .clabot file is not valid JSON");
   }
 
@@ -185,7 +185,7 @@ exports.handler = constructHandler(async webhook => {
 
   const removeLabelAndSetFailureStatus = async users => {
     await deleteLabel(issueUrl, botConfig.label);
-    await setStatus(webhook, headSha, "error", logFile);
+    await setStatus(webhook, headSha, "error", logFile, botConfig.commitStatus);
     return `CLA has not been signed by users ${users}, added a comment to ${pullRequestUrl}`;
   };
 
@@ -228,7 +228,7 @@ exports.handler = constructHandler(async webhook => {
         );
       }
 
-      await setStatus(webhook, headSha, "success", logFile);
+      await setStatus(webhook, headSha, "success", logFile, botConfig.commitStatus);
 
       message = `added label ${botConfig.label} to ${pullRequestUrl}`;
     } else {
