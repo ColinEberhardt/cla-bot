@@ -61,11 +61,11 @@ exports.getCommits = pullRequestUrl => ({
   method: "GET"
 });
 
-exports.setStatus = (webhook, headSha, state, target_url) => ({
+exports.setStatus = (webhook, headSha, state, target_url, context) => ({
   url: `${webhook.repository.url}/statuses/${headSha}`,
   body: {
     state,
-    context: "verification/cla-signed",
+    context: context,
     target_url
   }
 });
