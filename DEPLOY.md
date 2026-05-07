@@ -34,8 +34,10 @@ serverless deploy --stage dev
   - `Issues` set to `Read & write`
   - `Pull requests` set to `Read & write`
   - `Commit statuses` set to `Read & write`
+  - `Merge queues` set to `Read-only`
 - On `Subscribe to Events`, check:
   - `Pull Request`
+  - `Merge group`
   - `Status`
   - `Issue comment`
 - Set `Only on this account` to `Where can this GitHub App be installed?`
