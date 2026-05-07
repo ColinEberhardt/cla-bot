@@ -10,6 +10,11 @@ const getOrgConfigUrl = repositoryUrl => {
   return ghUrl;
 };
 
+const getMergeGroupCompareUrl = webhook => {
+  const { base_sha: baseSha, head_sha: headSha } = webhook.merge_group;
+  return `${webhook.repository.url}/compare/${baseSha}...${headSha}`;
+};
+
 exports.githubRequest = (opts, token, method = "POST") =>
   requestp(
     Object.assign(
@@ -58,6 +63,11 @@ exports.deleteLabel = (issueUrl, label) => ({
 
 exports.getCommits = pullRequestUrl => ({
   url: `${pullRequestUrl}/commits`,
+  method: "GET"
+});
+
+exports.getMergeGroupCommits = webhook => ({
+  url: getMergeGroupCompareUrl(webhook),
   method: "GET"
 });
 

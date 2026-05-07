@@ -710,6 +710,94 @@ describe("lambda function", () => {
     });
   });
 
+  describe("merge queue", () => {
+    beforeEach(() => {
+      event.body = {
+        action: "checks_requested",
+        merge_group: {
+          base_sha: "base-sha",
+          head_sha: "merge-head-sha"
+        },
+        repository: {
+          url: "http://foo.com/user/repo"
+        },
+        installation: {
+          id: 1000
+        }
+      };
+    });
+
+    it("should set status on the merge group head sha for users with a signed CLA", done => {
+      const request = mockMultiRequest(
+        merge(mockConfig, {
+          "http://foo.com/user/repo/compare/base-sha...merge-head-sha": {
+            body: {
+              commits: [
+                { sha: "pr-sha", author: { login: "ColinEberhardt" } },
+                {
+                  sha: "merge-head-sha",
+                  author: { login: "github-merge-queue[bot]" }
+                }
+              ]
+            }
+          },
+          "http://foo.com/user/repo/statuses/merge-head-sha": {
+            verifyRequest: opts => {
+              expect(opts.body.state).toEqual("success");
+              expect(opts.body.context).toEqual("verification/cla-signed");
+            }
+          }
+        })
+      );
+
+      mock("request", request);
+      const lambda = require("../src/index");
+
+      adaptedLambda(lambda.handler)(event, {}, (err, result) => {
+        expect(err).toBeNull();
+        expect(result.message).toEqual(
+          "set success status on merge group http://foo.com/user/repo/compare/base-sha...merge-head-sha"
+        );
+        done();
+      });
+    });
+
+    it("should set a failure status on the merge group head sha when a CLA has not been signed", done => {
+      const request = mockMultiRequest(
+        merge(mockConfig, {
+          "http://foo.com/user/repo/compare/base-sha...merge-head-sha": {
+            body: {
+              commits: [
+                { sha: "pr-sha", author: { login: "foo" } },
+                {
+                  sha: "merge-head-sha",
+                  author: { login: "github-merge-queue[bot]" }
+                }
+              ]
+            }
+          },
+          "http://foo.com/user/repo/statuses/merge-head-sha": {
+            verifyRequest: opts => {
+              expect(opts.body.state).toEqual("error");
+              expect(opts.body.context).toEqual("verification/cla-signed");
+            }
+          }
+        })
+      );
+
+      mock("request", request);
+      const lambda = require("../src/index");
+
+      adaptedLambda(lambda.handler)(event, {}, (err, result) => {
+        expect(err).toBeNull();
+        expect(result.message).toEqual(
+          "CLA has not been signed by users @foo, set failure status on merge group http://foo.com/user/repo/compare/base-sha...merge-head-sha"
+        );
+        done();
+      });
+    });
+  });
+
   describe("check unidentified contributors", () => {
     it("should fail if user is not set", done => {
       const request = mockMultiRequest(
