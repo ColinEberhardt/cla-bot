@@ -13,7 +13,7 @@ Please note that - if `GITHUB_ACCESS_TOKEN` is defined, `INTEGRATION_ENABLED` MU
 
 ## Serverless
 
-The cla-bot uses the serverless framework to manage the deployment of lambda functions, AWS gateway etc ...
+The cla-bot uses the serverless framework (v3) to manage the deployment of the lambda function, which is exposed via a [Lambda Function URL](https://docs.aws.amazon.com/lambda/latest/dg/urls-configuration.html). The URL is reported by `serverless deploy`, and should be used as the GitHub App `Webhook URL`.
 
 You can deploy the stack for a given stage as follows:
 
@@ -28,6 +28,7 @@ serverless deploy --stage dev
 - Access https://github.com/settings/apps/new
 - Set homepage URL to https://colineberhardt.github.io/cla-bot
 - Set `User authorization callback URL` and `Webhook URL` to `http://google.com`; you'll change it later on, as soon as the APIs are properly configured
+- Set a `Webhook secret`, and save it as `WEBHOOK_SECRET`
 - Set `Homepage URL` to `https://colineberhardt.github.io/cla-bot`
 - On Permissions:
   - `Repository contents` set to `Read-only`
@@ -36,7 +37,6 @@ serverless deploy --stage dev
   - `Commit statuses` set to `Read & write`
 - On `Subscribe to Events`, check:
   - `Pull Request`
-  - `Status`
   - `Issue comment`
 - Set `Only on this account` to `Where can this GitHub App be installed?`
 - Click on `Save`

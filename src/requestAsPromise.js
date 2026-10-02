@@ -14,7 +14,8 @@ const isSuccess = (options, statusCode) => {
 module.exports = options =>
   new Promise((resolve, reject) => {
     const logUrl = options.url.split("?")[0];
-    logger.info(`API Request ${logUrl}`, options);
+    // options are not logged, they include the Authorization header
+    logger.info(`API Request ${logUrl}`);
     request(options, (error, response, body) => {
       if (error) {
         logger.debug(`API Response ${logUrl}`, { error });
@@ -33,7 +34,9 @@ module.exports = options =>
           )
         );
       } else {
-        logger.debug(`API Response ${logUrl}`, body);
+        logger.debug(`API Response ${logUrl}`, {
+          statusCode: response && response.statusCode
+        });
         resolve(body);
       }
     });
