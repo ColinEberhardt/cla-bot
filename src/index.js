@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const contributionVerifier = require("./contributionVerifier");
@@ -54,8 +55,8 @@ const obtainToken = async webhook => {
   }
 };
 
-const response = body => ({
-  statusCode: 200,
+const response = (body, statusCode = 200) => ({
+  statusCode,
   body: JSON.stringify(body)
 });
 
@@ -69,29 +70,65 @@ const applyToken = token => {
   return api;
 };
 
+const requestBody = ({ body, isBase64Encoded }) =>
+  isBase64Encoded ? Buffer.from(body, "base64").toString("utf8") : body;
+
+// GitHub signs each webhook delivery using the app's webhook secret, see:
+// https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries
+const validSignature = (body, headers = {}) => {
+  if (!process.env.WEBHOOK_SECRET) {
+    return true;
+  }
+  // function URLs lower-case header names, API Gateway preserves their case
+  const header = Object.keys(headers || {}).find(
+    h => h.toLowerCase() === "x-hub-signature-256"
+  );
+  const signature = Buffer.from((header && headers[header]) || "");
+  const expected = Buffer.from(
+    "sha256=" +
+      crypto
+        .createHmac("sha256", process.env.WEBHOOK_SECRET)
+        .update(body)
+        .digest("hex")
+  );
+  return (
+    signature.length === expected.length &&
+    crypto.timingSafeEqual(signature, expected)
+  );
+};
+
 // the lambda interface is a bit clumsy, this adapts it into something more manageable
-const constructHandler = fn => async ({ body }, lambdaContext, callback) => {
+const constructHandler = fn => async event => {
+  logger.reset();
+
+  const body = requestBody(event);
+  if (!validSignature(body, event.headers)) {
+    logger.error("webhook signature verification failed");
+    return response({ error: "invalid signature" }, 401);
+  }
+
   try {
-    // serverless takes the request body and stringifies it
     const res = await fn(JSON.parse(body));
 
     if (typeof res === "string") {
       logger.debug("integration webhook callback response", res);
-      callback(null, response({ message: res }));
-    } else {
-      logger.error(`unexpected lambda function return value ${res}`);
+      return response({ message: res });
     }
+    logger.error(`unexpected lambda function return value ${res}`);
+    return response({ error: "unexpected return value" }, 500);
   } catch (err) {
     logger.error(err.toString());
-    callback(err.toString());
+    return response({ error: err.toString() }, 500);
+  } finally {
+    try {
+      await logger.flush();
+    } catch (err) {
+      console.error(`failed to write log to S3: ${err}`);
+    }
   }
-
-  logger.flush();
 };
 
 exports.handler = constructHandler(async webhook => {
-  logger.debug("lambda invoked", webhook);
-
   if (!validAction(webhook)) {
     return `ignored action of type ${webhook.action}`;
   }
@@ -104,17 +141,19 @@ exports.handler = constructHandler(async webhook => {
   const logFile = `https://s3.amazonaws.com/${
     process.env.LOGGING_BUCKET
   }/${logUrl}`;
-  logger.logFile(logUrl);
 
   if (webhook.action === "created") {
     if (!commentSummonsBot(webhook.comment.body)) {
       return "the comment didnt summon the cla-bot";
-    } else {
-      if (webhook.comment.user.login === `${process.env.BOT_NAME}[bot]`) {
-        return "the cla-bot summoned itself. Ignored!";
-      }
-      logger.info("The cla-bot has been summoned by a comment");
+    } else if (webhook.comment.user.login === `${process.env.BOT_NAME}[bot]`) {
+      return "the cla-bot summoned itself. Ignored!";
     }
+  }
+
+  // from this point on a CLA check is performed, so the log is written to S3
+  logger.logFile(logUrl);
+  if (webhook.action === "created") {
+    logger.info("The cla-bot has been summoned by a comment");
   }
 
   logger.info(`Checking CLAs for pull request ${pullRequestUrl}`);

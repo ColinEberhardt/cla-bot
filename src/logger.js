@@ -1,12 +1,9 @@
-const AWS = require("aws-sdk");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
-AWS.config.setPromisesDependency(Promise);
-
-const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
+const s3 = new S3Client({});
 
 const loggedMessages = [];
-const detailedLoggedMessages = [];
-let logFile = "";
+let logFile = null;
 
 const logMessage = (level, message, detail) => {
   const logData = [new Date().toISOString(), level, message];
@@ -15,8 +12,9 @@ const logMessage = (level, message, detail) => {
   if (level !== "DEBUG") {
     loggedMessages.push(logData.join(" "));
   }
-  logData.push(JSON.stringify(detail));
-  detailedLoggedMessages.push(logData.join(" "));
+  if (detail !== undefined) {
+    logData.push(JSON.stringify(detail));
+  }
   console.info(logData.join(" "));
 };
 
@@ -30,36 +28,32 @@ const logger = {
   error(message, detail) {
     logMessage("ERROR", message, detail);
   },
+  // module state survives between invocations of a warm lambda, so this
+  // must be called at the start of every invocation
+  reset() {
+    loggedMessages.length = 0;
+    logFile = null;
+  },
   logFile(filename) {
-    loggedMessages.length = [];
-    detailedLoggedMessages.length = [];
+    loggedMessages.length = 0;
     logFile = filename;
   },
-  flush() {
-    if (process.env.JASMINE) {
-      return Promise.resolve({});
+  // writes the user-facing log to S3, but only if this invocation performed
+  // a CLA check (i.e. logFile was set)
+  async flush() {
+    if (process.env.JASMINE || !logFile) {
+      return;
     }
 
-    return Promise.all([
-      s3
-        .putObject({
-          Body: loggedMessages.join("\r\n"),
-          Bucket: process.env.LOGGING_BUCKET,
-          Key: logFile,
-          ACL: "public-read",
-          ContentType: "text/plain"
-        })
-        .promise(),
-      s3
-        .putObject({
-          Body: detailedLoggedMessages.join("\r\n"),
-          Bucket: process.env.LOGGING_BUCKET,
-          Key: `${logFile}-DEBUG`,
-          ACL: "public-read",
-          ContentType: "text/plain"
-        })
-        .promise()
-    ]);
+    await s3.send(
+      new PutObjectCommand({
+        Body: loggedMessages.join("\r\n"),
+        Bucket: process.env.LOGGING_BUCKET,
+        Key: logFile,
+        ACL: "public-read",
+        ContentType: "text/plain"
+      })
+    );
   }
 };
 
