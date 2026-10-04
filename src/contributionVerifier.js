@@ -14,6 +14,15 @@ function partition(array, isValid) {
 
 const domainFromEmail = email => "@" + email.split("@")[1];
 
+// the clabot token is sent to this URL, so check the hostname rather than a substring
+const isGithubApiUrl = url => {
+  try {
+    return new URL(url).hostname === "api.github.com";
+  } catch (e) {
+    return false;
+  }
+};
+
 // return the list of committers who are not know contributors
 const contributorArrayVerifier = contributors => committers => {
   const lowerCaseContributors = contributors.map(c => c.toLowerCase());
@@ -105,7 +114,7 @@ module.exports = config => {
       return contributorArrayVerifier(configCopy.contributors);
     } else if (
       is.url(configCopy.contributors) &&
-      configCopy.contributors.indexOf("api.github.com") !== -1
+      isGithubApiUrl(configCopy.contributors)
     ) {
       console.info(
         "INFO",
