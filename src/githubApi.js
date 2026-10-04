@@ -10,6 +10,11 @@ const getOrgConfigUrl = repositoryUrl => {
   return ghUrl;
 };
 
+const getMergeGroupCompareUrl = webhook => {
+  const { base_sha: baseSha, head_sha: headSha } = webhook.merge_group;
+  return `${webhook.repository.url}/compare/${baseSha}...${headSha}`;
+};
+
 // most request URLs are taken from the webhook payload, so the token is only ever
 // sent to these origins (comma-separated, e.g. to support GitHub Enterprise)
 const allowedOrigins = () =>
@@ -82,6 +87,11 @@ exports.deleteLabel = (issueUrl, label) => ({
 
 exports.getCommits = pullRequestUrl => ({
   url: `${pullRequestUrl}/commits`,
+  method: "GET"
+});
+
+exports.getMergeGroupCommits = webhook => ({
+  url: getMergeGroupCompareUrl(webhook),
   method: "GET"
 });
 

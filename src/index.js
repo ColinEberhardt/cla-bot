@@ -17,9 +17,21 @@ const sortUnique = arr =>
     .sort((a, b) => a - b)
     .filter((value, index, self) => self.indexOf(value, index + 1) === -1);
 
+const mergeGroupAction = webhook =>
+  webhook.action === "checks_requested" &&
+  webhook.merge_group &&
+  webhook.merge_group.base_sha &&
+  webhook.merge_group.head_sha;
+
+const mergeGroupCompareUrl = webhook => {
+  const { base_sha: baseSha, head_sha: headSha } = webhook.merge_group;
+  return `${webhook.repository.url}/compare/${baseSha}...${headSha}`;
+};
+
 const validAction = webhook =>
   webhook.action === "opened" ||
   webhook.action === "synchronize" ||
+  mergeGroupAction(webhook) ||
   // issues do not have a body.issue.pull_request property, whereas PRs do
   (webhook.action === "created" && webhook.issue.pull_request);
 
@@ -30,10 +42,14 @@ const gitHubUrls = webhook =>
         pullRequest: webhook.issue.pull_request.url,
         issue: webhook.issue.url
       }
-    : {
-        pullRequest: webhook.pull_request.url,
-        issue: webhook.pull_request.issue_url
-      };
+    : mergeGroupAction(webhook)
+      ? {
+          pullRequest: mergeGroupCompareUrl(webhook)
+        }
+      : {
+          pullRequest: webhook.pull_request.url,
+          issue: webhook.pull_request.issue_url
+        };
 
 const commentSummonsBot = comment =>
   comment.match(new RegExp(`@${process.env.BOT_NAME}(\\[bot\\])?\\s*check`)) !==
@@ -168,6 +184,7 @@ exports.handler = constructHandler(async webhook => {
     getFile,
     addLabel,
     getCommits,
+    getMergeGroupCommits,
     setStatus,
     addCommentNoCLA,
     addCommentUnidentified,
@@ -176,7 +193,20 @@ exports.handler = constructHandler(async webhook => {
   } = applyToken(token);
 
   logger.info("Obtaining the list of commits for the pull request");
-  const commits = await getCommits(pullRequestUrl);
+  let commits;
+  if (mergeGroupAction(webhook)) {
+    const commitResponse = await getMergeGroupCommits(webhook);
+    commits = commitResponse.commits || [];
+    const commitsWithoutMergeGroupHead = commits.filter(
+      c => c.sha !== webhook.merge_group.head_sha
+    );
+    commits =
+      commitsWithoutMergeGroupHead.length > 0
+        ? commitsWithoutMergeGroupHead
+        : commits;
+  } else {
+    commits = await getCommits(pullRequestUrl);
+  }
 
   logger.info(
     `Total Commits: ${commits.length}, checking CLA status for committers`
@@ -184,7 +214,9 @@ exports.handler = constructHandler(async webhook => {
 
   // PRs include the head sha, for comments we have to determine this from the commit history
   let headSha;
-  if (webhook.pull_request) {
+  if (mergeGroupAction(webhook)) {
+    headSha = webhook.merge_group.head_sha;
+  } else if (webhook.pull_request) {
     headSha = webhook.pull_request.head.sha;
   } else {
     headSha = commits[commits.length - 1].sha;
@@ -235,6 +267,10 @@ exports.handler = constructHandler(async webhook => {
     logger.info(
       `Some commits from the following contributors are not signed with a valid email address: ${unidentifiedString}. `
     );
+    if (mergeGroupAction(webhook)) {
+      await setStatus(webhook, headSha, "error", logFile);
+      return `CLA has not been signed by users ${unidentifiedString}, set failure status on merge group ${pullRequestUrl}`;
+    }
     await addCommentUnidentified(
       issueUrl,
       botConfig.messageMissingEmail,
@@ -251,6 +287,19 @@ exports.handler = constructHandler(async webhook => {
     }));
     const verifier = contributionVerifier(botConfig);
     const nonContributors = await verifier(committers, token);
+
+    if (mergeGroupAction(webhook)) {
+      if (nonContributors.length === 0) {
+        await setStatus(webhook, headSha, "success", logFile);
+        return `set success status on merge group ${pullRequestUrl}`;
+      }
+
+      const usersWithoutCLA = sortUnique(nonContributors)
+        .map(contributorId => `@${contributorId}`)
+        .join(", ");
+      await setStatus(webhook, headSha, "error", logFile);
+      return `CLA has not been signed by users ${usersWithoutCLA}, set failure status on merge group ${pullRequestUrl}`;
+    }
 
     if (nonContributors.length === 0) {
       logger.info(
