@@ -57,8 +57,3 @@ functions:
     reservedConcurrency: 50
     # a Lambda Function URL is free, API Gateway charges per request
     url: true
-    # TODO: remove once the GitHub App webhook URL points at the function URL
-    events:
-      - http:
-          path: cla-check
-          method: post
