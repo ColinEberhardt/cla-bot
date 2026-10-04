@@ -6,23 +6,54 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${file(./src/serverless.env.yml):${opt:stage}.LOGGING_BUCKET}
+        LifecycleConfiguration:
+          Rules:
+            - Id: delete-after-7-days
+              Status: Enabled
+              ExpirationInDays: 7
+    # public function URLs also require lambda:InvokeFunction, which serverless v3 doesn't add
+    ClaDashbotLambdaPermissionFnUrlInvoke:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName:
+          Fn::GetAtt: [ClaDashbotLambdaFunction, Arn]
+        Action: lambda:InvokeFunction
+        Principal: "*"
+        InvokedViaFunctionUrl: true
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs24.x
   region: us-east-1
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - s3:PutObject
-        - s3:PutObjectAcl
-      Resource: "arn:aws:s3:::${file(./src/serverless.env.yml):${opt:stage}.LOGGING_BUCKET}/*"
+  memorySize: 256
+  timeout: 10
+  logRetentionInDays: 14
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:PutObjectAcl
+          Resource: "arn:aws:s3:::${file(./src/serverless.env.yml):${opt:stage}.LOGGING_BUCKET}/*"
+
+package:
+  patterns:
+    - "!**/._*"
+    - "!.vscode/**"
+    - "!spec/**"
+    - "!src/dev/**"
+    - "!src/serverless.env*.yml"
+    - "!*.md"
+    - "!secrets.tar*"
+    - "!save-secrets.sh"
+    - "!*-key.pem"
+    - clabot-integration-key.pem
 
 functions:
   cla-bot:
     handler: src/index.handler
     environment: ${file(./src/serverless.env.yml):${opt:stage}}
-    events:
-      - http:
-          path: cla-check
-          method: post
+    reservedConcurrency: 50
+    # a Lambda Function URL is free, API Gateway charges per request
+    url: true
