@@ -14,97 +14,97 @@ This bot has the following features:
 
 ## Used by ...
 
-This bot checks over 20,000 PRs each month and is used by a number of prominent open source projects including:
+This bot checks around 30,000 pull requests each month across more than 700 installations, and is used by a number of prominent open source projects including:
 
 <table>
 <tr>
   <td>
-    <a href="https://www.nativescript.org/"><img src="https://avatars3.githubusercontent.com/u/7392261?s=50"/>
-    <br/>NativeScript</a>
+    <a href="https://zed.dev/"><img src="https://avatars.githubusercontent.com/zed-industries?s=50" width="50" height="50"/>
+    <br/>Zed</a>
   </td>
   <td>
-    <a href="https://trino.io/"><img src="https://avatars2.githubusercontent.com/u/34147222?s=50"/>
+    <a href="https://openbb.co/"><img src="https://avatars.githubusercontent.com/OpenBB-finance?s=50" width="50" height="50"/>
+    <br/>OpenBB</a>
+  </td>
+  <td>
+    <a href="https://www.warp.dev/"><img src="https://avatars.githubusercontent.com/warpdotdev?s=50" width="50" height="50"/>
+    <br/>Warp</a>
+  </td>
+  <td>
+    <a href="https://github.com/RSSNext/Folo"><img src="https://avatars.githubusercontent.com/RSSNext?s=50" width="50" height="50"/>
+    <br/>Folo</a>
+  </td>
+  <td>
+    <a href="https://trufflesecurity.com/"><img src="https://avatars.githubusercontent.com/trufflesecurity?s=50" width="50" height="50"/>
+    <br/>Truffle Security</a>
+  </td>
+  <td>
+    <a href="https://www.zama.ai/"><img src="https://avatars.githubusercontent.com/zama-ai?s=50" width="50" height="50"/>
+    <br/>Zama</a>
+  </td>
+  <td>
+    <a href="https://trino.io/"><img src="https://avatars.githubusercontent.com/trinodb?s=50" width="50" height="50"/>
     <br/>Trino</a>
-  </td>
-  <td>
-    <a href="https://www.demandware.com/"><img src="https://avatars3.githubusercontent.com/u/1315434?s=50"/>
-    <br/>Salesforce</a>
-  </td>
-  <td>
-    <a href="https://github.com/Seagate"><img src="https://avatars2.githubusercontent.com/u/5016309?s=50"/>
-    <br/>Seagate</a>
-  </td>
-  <td>
-    <a href="https://mailchimp.com/"><img src="https://avatars2.githubusercontent.com/u/216758?s=50"/>
-    <br/>Mailchimp</a>
-  </td>
-  <td>
-    <a href="https://web3.foundation/"><img src="https://avatars0.githubusercontent.com/u/30405397?s=50"/>
-    <br/>Web3</a>
-  </td>
-  <td>
-    <a href="https://www.mautic.org/"><img src="https://avatars2.githubusercontent.com/u/5257677?s=50"/>
-    <br/>Mautic</a>
   </td>
 </tr>
 <tr>
   <td>
-    <a href="https://www.codecademy.com/"><img src="https://avatars3.githubusercontent.com/u/1463944?s=50"/>
-    <br/>Codecademy</a>
+    <a href="https://arangodb.com/"><img src="https://avatars.githubusercontent.com/arangodb?s=50" width="50" height="50"/>
+    <br/>ArangoDB</a>
   </td>
   <td>
-    <a href="https://conda.io/"><img src="https://avatars2.githubusercontent.com/u/6392739?s=50"/>
-    <br/>Conda</a>
+    <a href="https://www.getdbt.com/"><img src="https://avatars.githubusercontent.com/dbt-labs?s=50" width="50" height="50"/>
+    <br/>dbt Labs</a>
   </td>
   <td>
-    <a href="http://v2.onivim.io/"><img src="https://avatars0.githubusercontent.com/u/31161891?s=50"/>
-    <br/>onivim</a>
+    <a href="https://www.stremio.com/"><img src="https://avatars.githubusercontent.com/Stremio?s=50" width="50" height="50"/>
+    <br/>Stremio</a>
   </td>
   <td>
-    <a href="http://egghead.io/"><img src="https://avatars2.githubusercontent.com/u/5975001?s=50"/>
-    <br/>Egghead</a>
+    <a href="https://www.hivemq.com/"><img src="https://avatars.githubusercontent.com/hivemq?s=50" width="50" height="50"/>
+    <br/>HiveMQ</a>
   </td>
   <td>
-    <a href="http://geonode.org/"><img src="https://avatars0.githubusercontent.com/u/132843?s=50"/>
+    <a href="https://www.raspberrypi.org/"><img src="https://avatars.githubusercontent.com/RaspberryPiFoundation?s=50" width="50" height="50"/>
+    <br/>Raspberry Pi</a>
+  </td>
+  <td>
+    <a href="https://github.com/realm"><img src="https://avatars.githubusercontent.com/realm?s=50" width="50" height="50"/>
+    <br/>Realm</a>
+  </td>
+  <td>
+    <a href="https://mempool.space/"><img src="https://avatars.githubusercontent.com/mempool?s=50" width="50" height="50"/>
+    <br/>mempool</a>
+  </td>
+</tr>
+<tr>
+  <td>
+    <a href="https://pretix.eu/"><img src="https://avatars.githubusercontent.com/pretix?s=50" width="50" height="50"/>
+    <br/>pretix</a>
+  </td>
+  <td>
+    <a href="https://icinga.com/"><img src="https://avatars.githubusercontent.com/Icinga?s=50" width="50" height="50"/>
+    <br/>Icinga</a>
+  </td>
+  <td>
+    <a href="https://geonode.org/"><img src="https://avatars.githubusercontent.com/GeoNode?s=50" width="50" height="50"/>
     <br/>GeoNode</a>
   </td>
   <td>
-    <a href="https://www.graycore.io/"><img src="https://avatars3.githubusercontent.com/u/33813698?s=50"/>
-    <br/>Graycore</a>
+    <a href="https://www.codecademy.com/"><img src="https://avatars.githubusercontent.com/Codecademy?s=50" width="50" height="50"/>
+    <br/>Codecademy</a>
   </td>
   <td>
-    <a href="http://www.hivemq.com/"><img src="https://avatars1.githubusercontent.com/u/4578332?s=50"/>
-    <br/>HiveMQ</a>
-  </td>
-</tr>
-<tr>
-  <td>
-    <a href="https://gauge.org/"><img src="https://avatars0.githubusercontent.com/u/7044589?s=50"/>
-    <br/>Gauge</a>
+    <a href="https://github.com/NetApp"><img src="https://avatars.githubusercontent.com/NetApp?s=50" width="50" height="50"/>
+    <br/>NetApp</a>
   </td>
   <td>
-    <a href="https://finos.org/"><img src="https://avatars0.githubusercontent.com/u/35377814?s=50"/>
-    <br/>FINOS</a>
+    <a href="https://www.ibm.com/"><img src="https://avatars.githubusercontent.com/IBM?s=50" width="50" height="50"/>
+    <br/>IBM</a>
   </td>
   <td>
-    <a href="https://www.predix-ui.com/#/home"><img src="https://avatars0.githubusercontent.com/u/32078779?s=50"/>
-    <br/>Predix</a>
-  </td>
-  <td>
-    <a href="https://www.devcolor.org/"><img src="https://avatars0.githubusercontent.com/u/17156358?s=50"/>
-    <br/>dev/color</a>
-  </td>
-  <td>
-    <a href="http://gladius.io/"><img src="https://avatars0.githubusercontent.com/u/32402535?s=50"/>
-    <br/>Gladius</a>
-  </td>
-  <td>
-    <a href="https://storj.io/"><img src="https://avatars0.githubusercontent.com/u/6308081?s=50"/>
-    <br/>Storj</a>
-  </td>
-  <td>
-    <a href="https://www.skylight.io/"><img src="https://avatars0.githubusercontent.com/u/4999088?s=50"/>
-    <br/>Skylight</a>
+    <a href="https://polygon.technology/"><img src="https://avatars.githubusercontent.com/0xPolygonHermez?s=50" width="50" height="50"/>
+    <br/>Polygon</a>
   </td>
 </tr>
 </table>
