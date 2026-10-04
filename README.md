@@ -18,92 +18,92 @@ This bot checks around 30,000 pull requests each month across more than 700 inst
 
 <table>
 <tr>
-  <td>
-    <a href="https://zed.dev/"><img src="https://avatars.githubusercontent.com/zed-industries?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://zed.dev/"><img src="https://avatars.githubusercontent.com/u/79345384?s=50" width="50" height="50"/>
     <br/>Zed</a>
   </td>
-  <td>
-    <a href="https://openbb.co/"><img src="https://avatars.githubusercontent.com/OpenBB-finance?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://openbb.co/"><img src="https://avatars.githubusercontent.com/u/80064875?s=50" width="50" height="50"/>
     <br/>OpenBB</a>
   </td>
-  <td>
-    <a href="https://www.warp.dev/"><img src="https://avatars.githubusercontent.com/warpdotdev?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://www.warp.dev/"><img src="https://avatars.githubusercontent.com/u/71840468?s=50" width="50" height="50"/>
     <br/>Warp</a>
   </td>
-  <td>
-    <a href="https://github.com/RSSNext/Folo"><img src="https://avatars.githubusercontent.com/RSSNext?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://github.com/RSSNext/Folo"><img src="https://avatars.githubusercontent.com/u/95456295?s=50" width="50" height="50"/>
     <br/>Folo</a>
   </td>
-  <td>
-    <a href="https://trufflesecurity.com/"><img src="https://avatars.githubusercontent.com/trufflesecurity?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://trufflesecurity.com/"><img src="https://avatars.githubusercontent.com/u/79229934?s=50" width="50" height="50"/>
     <br/>Truffle Security</a>
   </td>
-  <td>
-    <a href="https://www.zama.ai/"><img src="https://avatars.githubusercontent.com/zama-ai?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://www.zama.ai/"><img src="https://avatars.githubusercontent.com/u/57671822?s=50" width="50" height="50"/>
     <br/>Zama</a>
   </td>
-  <td>
-    <a href="https://trino.io/"><img src="https://avatars.githubusercontent.com/trinodb?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://trino.io/"><img src="https://avatars.githubusercontent.com/u/34147222?s=50" width="50" height="50"/>
     <br/>Trino</a>
   </td>
 </tr>
 <tr>
-  <td>
-    <a href="https://arangodb.com/"><img src="https://avatars.githubusercontent.com/arangodb?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://arangodb.com/"><img src="https://avatars.githubusercontent.com/u/5547849?s=50" width="50" height="50"/>
     <br/>ArangoDB</a>
   </td>
-  <td>
-    <a href="https://www.getdbt.com/"><img src="https://avatars.githubusercontent.com/dbt-labs?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://www.getdbt.com/"><img src="https://avatars.githubusercontent.com/u/18339788?s=50" width="50" height="50"/>
     <br/>dbt Labs</a>
   </td>
-  <td>
-    <a href="https://www.stremio.com/"><img src="https://avatars.githubusercontent.com/Stremio?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://www.stremio.com/"><img src="https://avatars.githubusercontent.com/u/13152917?s=50" width="50" height="50"/>
     <br/>Stremio</a>
   </td>
-  <td>
-    <a href="https://www.hivemq.com/"><img src="https://avatars.githubusercontent.com/hivemq?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://www.hivemq.com/"><img src="https://avatars.githubusercontent.com/u/4578332?s=50" width="50" height="50"/>
     <br/>HiveMQ</a>
   </td>
-  <td>
-    <a href="https://www.raspberrypi.org/"><img src="https://avatars.githubusercontent.com/RaspberryPiFoundation?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://www.raspberrypi.org/"><img src="https://avatars.githubusercontent.com/u/3691930?s=50" width="50" height="50"/>
     <br/>Raspberry Pi</a>
   </td>
-  <td>
-    <a href="https://github.com/realm"><img src="https://avatars.githubusercontent.com/realm?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://github.com/realm"><img src="https://avatars.githubusercontent.com/u/7575099?s=50" width="50" height="50"/>
     <br/>Realm</a>
   </td>
-  <td>
-    <a href="https://mempool.space/"><img src="https://avatars.githubusercontent.com/mempool?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://mempool.space/"><img src="https://avatars.githubusercontent.com/u/54372811?s=50" width="50" height="50"/>
     <br/>mempool</a>
   </td>
 </tr>
 <tr>
-  <td>
-    <a href="https://pretix.eu/"><img src="https://avatars.githubusercontent.com/pretix?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://pretix.eu/"><img src="https://avatars.githubusercontent.com/u/8465417?s=50" width="50" height="50"/>
     <br/>pretix</a>
   </td>
-  <td>
-    <a href="https://icinga.com/"><img src="https://avatars.githubusercontent.com/Icinga?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://icinga.com/"><img src="https://avatars.githubusercontent.com/u/835441?s=50" width="50" height="50"/>
     <br/>Icinga</a>
   </td>
-  <td>
-    <a href="https://geonode.org/"><img src="https://avatars.githubusercontent.com/GeoNode?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://geonode.org/"><img src="https://avatars.githubusercontent.com/u/132843?s=50" width="50" height="50"/>
     <br/>GeoNode</a>
   </td>
-  <td>
-    <a href="https://www.codecademy.com/"><img src="https://avatars.githubusercontent.com/Codecademy?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://www.codecademy.com/"><img src="https://avatars.githubusercontent.com/u/1463944?s=50" width="50" height="50"/>
     <br/>Codecademy</a>
   </td>
-  <td>
-    <a href="https://github.com/NetApp"><img src="https://avatars.githubusercontent.com/NetApp?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://github.com/NetApp"><img src="https://avatars.githubusercontent.com/u/370544?s=50" width="50" height="50"/>
     <br/>NetApp</a>
   </td>
-  <td>
-    <a href="https://www.ibm.com/"><img src="https://avatars.githubusercontent.com/IBM?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://www.ibm.com/"><img src="https://avatars.githubusercontent.com/u/1459110?s=50" width="50" height="50"/>
     <br/>IBM</a>
   </td>
-  <td>
-    <a href="https://polygon.technology/"><img src="https://avatars.githubusercontent.com/0xPolygonHermez?s=50" width="50" height="50"/>
+  <td align="center" style="white-space: nowrap">
+    <a href="https://polygon.technology/"><img src="https://avatars.githubusercontent.com/u/108818688?s=50" width="50" height="50"/>
     <br/>Polygon</a>
   </td>
 </tr>
