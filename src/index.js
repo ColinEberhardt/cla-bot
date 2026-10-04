@@ -62,10 +62,10 @@ const response = (body, statusCode = 200) => ({
 
 const applyToken = token => {
   const api = {};
-  githubRequest = githubApi.githubRequest;
-  Object.keys(githubApi).forEach(apiMethod => {
+  const { githubRequest, isAllowedUrl, ...endpoints } = githubApi;
+  Object.keys(endpoints).forEach(apiMethod => {
     api[apiMethod] = (...args) =>
-      githubRequest(githubApi[apiMethod].apply(null, args), token);
+      githubRequest(endpoints[apiMethod].apply(null, args), token);
   });
   return api;
 };
@@ -77,7 +77,8 @@ const requestBody = ({ body, isBase64Encoded }) =>
 // https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries
 const validSignature = (body, headers = {}) => {
   if (!process.env.WEBHOOK_SECRET) {
-    return true;
+    // fail closed when a secret is required but has not been configured
+    return process.env.REQUIRE_SIGNATURE !== "true";
   }
   // function URLs lower-case header names, API Gateway preserves their case
   const header = Object.keys(headers || {}).find(

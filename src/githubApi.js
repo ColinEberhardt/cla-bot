@@ -10,21 +10,45 @@ const getOrgConfigUrl = repositoryUrl => {
   return ghUrl;
 };
 
+// most request URLs are taken from the webhook payload, so the token is only ever
+// sent to these origins (comma-separated, e.g. to support GitHub Enterprise)
+const allowedOrigins = () =>
+  (
+    process.env.GITHUB_ALLOWED_ORIGINS ||
+    "https://api.github.com,https://raw.githubusercontent.com"
+  )
+    .split(",")
+    .map(origin => origin.trim());
+
+const originOf = url => {
+  try {
+    return new URL(url).origin;
+  } catch (e) {
+    return null;
+  }
+};
+
+exports.isAllowedUrl = url => allowedOrigins().includes(originOf(url));
+
 exports.githubRequest = (opts, token, method = "POST") =>
-  requestp(
-    Object.assign(
-      {},
-      {
-        json: true,
-        headers: {
-          Authorization: `token ${token}`,
-          "User-Agent": "github-cla-bot"
-        },
-        method
-      },
-      opts
-    )
-  );
+  exports.isAllowedUrl(opts.url)
+    ? requestp(
+        Object.assign(
+          {},
+          {
+            json: true,
+            headers: {
+              Authorization: `token ${token}`,
+              "User-Agent": "github-cla-bot"
+            },
+            method
+          },
+          opts
+        )
+      )
+    : Promise.reject(
+        new Error(`Refusing to send credentials to ${originOf(opts.url)}`)
+      );
 
 exports.getOrgConfig = webhook => ({
   url: getOrgConfigUrl(webhook.repository.url),

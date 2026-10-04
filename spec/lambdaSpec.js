@@ -15,6 +15,14 @@ process.env.INTEGRATION_KEY = "spec/test-key.pem";
 process.env.INTEGRATION_ID = "2208";
 process.env.INTEGRATION_ENABLED = "true";
 process.env.BOT_NAME = "cla-bot";
+// the fake hosts used by the request mocks below
+process.env.GITHUB_ALLOWED_ORIGINS = [
+  "http://foo.com",
+  "https://foo.com",
+  "http://raw.foo.com",
+  "http://raw.github.com",
+  "https://api.github.com"
+].join(",");
 
 // suppress logging, and sending of logs to S3, when unit testing
 console.info = noop;
@@ -291,6 +299,18 @@ describe("lambda function", () => {
         done();
       });
     });
+
+    it("should reject all requests when a signature is required but no secret is configured", done => {
+      delete process.env.WEBHOOK_SECRET;
+      process.env.REQUIRE_SIGNATURE = "true";
+      const lambda = require("../src/index");
+
+      lambda.handler({ body: JSON.stringify(event.body) }).then(result => {
+        delete process.env.REQUIRE_SIGNATURE;
+        expect(result.statusCode).toEqual(401);
+        done();
+      });
+    });
   });
 
   describe("HTTP issues", () => {
@@ -457,6 +477,35 @@ describe("lambda function", () => {
       const lambda = require("../src/index");
 
       adaptedLambda(lambda.handler)(event, {}, done);
+    });
+
+    [
+      "https://evil.example/user/repo/pulls/2",
+      "https://api.github.com.evil.example/user/repo/pulls/2",
+      "http://api.github.com/user/repo/pulls/2"
+    ].forEach(pullRequestUrl => {
+      it(`should not send the token to a payload URL outside the allow-list (${pullRequestUrl})`, done => {
+        event.body.pull_request.url = pullRequestUrl;
+        const requestedUrls = [];
+        const request = mockMultiRequest(mockConfig);
+        mock("request", (opts, cb) => {
+          requestedUrls.push(opts.url);
+          return request(opts, cb);
+        });
+        const lambda = require("../src/index");
+
+        adaptedLambda(lambda.handler)(event, {}, err => {
+          expect(err).toEqual(
+            `Error: Refusing to send credentials to ${
+              new URL(pullRequestUrl).origin
+            }`
+          );
+          expect(
+            requestedUrls.some(url => url.startsWith(pullRequestUrl))
+          ).toBe(false);
+          done();
+        });
+      });
     });
   });
 
@@ -932,6 +981,32 @@ describe("contributionVerifier", () => {
       });
     });
 
+    it("should not treat a URL that merely contains api.github.com as a GitHub API URL", done => {
+      const contributorListUrl =
+        "https://evil.example/api.github.com/contributors.json";
+      const config = { contributorListUrl };
+
+      const request = mockMultiRequest({
+        [contributorListUrl]: {
+          body: ["bob"],
+          verifyRequest: opts => {
+            // fetched as a plain URL, without the clabot token
+            expect(opts.headers).toBeUndefined();
+          }
+        }
+      });
+
+      mock("request", request);
+      const verifier = require("../src/contributionVerifier");
+
+      verifier(config)([{ login: "bob" }], "clabot-token").then(
+        nonContributors => {
+          expect(nonContributors).toEqual([]);
+          done();
+        }
+      );
+    });
+
     it("should support contributor verification via webhook", done => {
       const config = {
         contributorWebhook: "http://bar.com/contributor?checkContributor="
@@ -1134,6 +1209,39 @@ describe("contributionVerifier", () => {
         )
       );
     });
+  });
+});
+
+describe("githubApi allow-list", () => {
+  let configuredOrigins;
+
+  beforeEach(() => {
+    configuredOrigins = process.env.GITHUB_ALLOWED_ORIGINS;
+    delete process.env.GITHUB_ALLOWED_ORIGINS;
+  });
+
+  afterEach(() => {
+    process.env.GITHUB_ALLOWED_ORIGINS = configuredOrigins;
+  });
+
+  it("should allow the GitHub API and raw content hosts by default", () => {
+    const { isAllowedUrl } = require("../src/githubApi");
+    expect(isAllowedUrl("https://api.github.com/repos/foo/bar")).toBe(true);
+    expect(
+      isAllowedUrl("https://raw.githubusercontent.com/foo/bar/master/.clabot")
+    ).toBe(true);
+  });
+
+  it("should reject other schemes, hosts, ports and invalid URLs", () => {
+    const { isAllowedUrl } = require("../src/githubApi");
+    [
+      "http://api.github.com/repos/foo/bar",
+      "https://api.github.com.evil.example/repos/foo/bar",
+      "https://evil.example/api.github.com/repos/foo/bar",
+      "https://api.github.com:8443/repos/foo/bar",
+      "not a url",
+      undefined
+    ].forEach(url => expect(isAllowedUrl(url)).toBe(false, url));
   });
 });
 
